@@ -1,0 +1,35 @@
+==== The Chaos Composer ====
+
+This project was the direct result of my Master's Thesis.
+
+The Chaos Composer uses one dimension of the orbit of up to
+four different chaotic equations.  
+It uses the chaotic equations to derive a structure called an Event Tree.
+The Event Tree is then parsed as the basis of a melody, written
+to midi.  Because this was an experiment, the scripts actually generate
+multiple runs and also generates control runs- which are melodies 
+in which the notes are selected purely randomly.  You also get all
+the data in csv formats.  
+
+To Run the project:
+
+ruby Driver.rb
+
+and you should wind up with some midi files and
+data about the experiment runs:
+
+data/{chaotic equation name}/{name}_data_set.csv  <-- csv of the results
+data/{chaotic equation name}/midi       <-- midi for compositions and control runs
+data/{chaotic equation name}/note_list  <-- text files of midi values for later analysis
+
+
+TODOS:
+
+- make the Driver a legit shell script so you can
+select which chaotic equation to use via command-line
+params
+
+- Figure out a better internall archictecture so it's easy for
+someone else to "subclass and go" if they want to 
+
+- Document, document, document...

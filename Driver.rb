@@ -2,6 +2,7 @@ require 'Generators.rb'
 require 'rubygems'
 require 'EventTree.rb'
 require 'ChaosComposer.rb'
+require 'fileutils'
 
 include Generators
 
@@ -163,35 +164,45 @@ end
 
 @root_scale = [1,0,1,0,1,1,0,1,0,1,0,1]
 
-runs = 10
-N = 100
-control_runs = Rossler::compose_runs(runs,N,ChaosComposer.master_scale.size)
-experiment_runs = Rossler::raw_compose_runs(runs,N)
+if __FILE__ == $0
+  runs = 10
+  N = 100
 
-@test = 'rossler'
-File.open("data/#{@test}_data_set.csv", 'w') do |f|
-  all_controls = []
-  all_experiments = []
+  ## NEEDS TO BE PARAMETERIZED
+  
+  control_runs = Rossler::compose_runs(runs,N,ChaosComposer.master_scale.size)
+  experiment_runs = Rossler::raw_compose_runs(runs,N)
 
-  runs.times do |index|
-      
-      control = ChaosComposer::control(control_runs[index])
-      guide = ChaosComposer::compose(experiment_runs[index], @root_scale)
-      
-      if(index % 3 == 0)
-        write_track("data/#{@test}/midi/#{@test}_control_run_#{index}.mid", control)
-        write_track("data/#{@test}/midi/#{@test}_event_tree_run_#{index}.mid",guide)
-        write_note_list("data/#{@test}/note_list/#{@test}_control_run_#{index}.note_list", control)
-        write_note_list("data/#{@test}/note_list/#{@test}_event_tree_run_#{index}.note_list",guide)
-      end
-      f << avg_data_set(guide, control, 'relative_pitch_changes', index)
-      f << avg_data_set(guide, control, 'relative_rhythm_changes', index)
-      all_controls += control
-      all_experiments += guide
+  @test = 'rossler'
+
+  ## END NEEDS TO BE PARAMETERIZED
+
+  FileUtils.mkdir_p("data/#{@test}/midi")
+  FileUtils.mkdir_p("data/#{@test}/note_list")
+  File.open("data/#{@test}_data_set.csv", 'w') do |f|
+    all_controls = []
+    all_experiments = []
+
+    runs.times do |index|
+        
+        control = ChaosComposer::control(control_runs[index])
+        guide = ChaosComposer::compose(experiment_runs[index], @root_scale)
+        
+        if(index % 3 == 0)
+          write_track("data/#{@test}/midi/#{@test}_control_run_#{index}.mid", control)
+          write_track("data/#{@test}/midi/#{@test}_event_tree_run_#{index}.mid",guide)
+          write_note_list("data/#{@test}/note_list/#{@test}_control_run_#{index}.note_list", control)
+          write_note_list("data/#{@test}/note_list/#{@test}_event_tree_run_#{index}.note_list",guide)
+        end
+        f << avg_data_set(guide, control, 'relative_pitch_changes', index)
+        f << avg_data_set(guide, control, 'relative_rhythm_changes', index)
+        all_controls += control
+        all_experiments += guide
+    end
+    
+    f << histo_data_set(all_experiments, all_controls, 'absolute_pitch_frequency')
+    f << histo_data_set(all_experiments, all_controls, 'scale_positions')
+    
+    f.close()
   end
-  
-  f << histo_data_set(all_experiments, all_controls, 'absolute_pitch_frequency')
-  f << histo_data_set(all_experiments, all_controls, 'scale_positions')
-  
-  f.close()
 end
