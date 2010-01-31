@@ -162,20 +162,36 @@ def histo_data_set(guide, control, method)
   return "#{control_data}\n#{exp_data}"
 end
 
+
+#major scale
 @root_scale = [1,0,1,0,1,1,0,1,0,1,0,1]
 
-if __FILE__ == $0
+
+########
+#  Main
+#    equation_name - one of ['Rossler', 'Henon', 'Lorenz', 'Chua']  
+#
+#    takes equation name and invokes Chaoscomposer with the data
+#    from the equation.
+#
+#    composition takes the model of an experiment where
+#     N is the number of notes generated in the melody and
+#     runs is the number of melodies to generate
+#     ** for each "run" of chaotic compositions, a "control"
+#     counterpart is created using random chance so we can
+#     evaluate if our models/methods are better than random..
+
+def main(equation_name)
   runs = 10
-  N = 100
+  n = 100
 
-  ## NEEDS TO BE PARAMETERIZED
+  klass = Object.const_get(equation_name)
   
-  control_runs = Rossler::compose_runs(runs,N,ChaosComposer.master_scale.size)
-  experiment_runs = Rossler::raw_compose_runs(runs,N)
+  control_runs = klass::compose_runs(runs,n,ChaosComposer.master_scale.size)
+  experiment_runs = klass::raw_compose_runs(runs,n)
 
-  @test = 'rossler'
+  @test = klass.to_s.split('::')[1].downcase! 
 
-  ## END NEEDS TO BE PARAMETERIZED
 
   FileUtils.mkdir_p("data/#{@test}/midi")
   FileUtils.mkdir_p("data/#{@test}/note_list")
@@ -206,3 +222,20 @@ if __FILE__ == $0
     f.close()
   end
 end
+
+
+# process shell input
+
+if __FILE__ == $0
+        
+  tests = ['Rossler', 'Henon', 'Lorenz', 'Chua']  
+
+  if( tests.include? ARGV[0] )
+     main(ARGV[0])
+  else
+     puts "Bad input"
+     exit(1)
+  end
+
+end
+
