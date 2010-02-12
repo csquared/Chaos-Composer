@@ -2,7 +2,7 @@ module ChaosComposer
   
   OCTAVES = 4
   @@notes = %w{C C#/Db D D#/Eb E F F#/Gb G G#/Ab A A#/Bb B}
-  @@note_lengths = %w{sixteenth dotted_sixteenth eighth dotted_eighth quarter dotted_quarter half dotted_half whole}
+  @@note_lengths = %w{sixteenth dottedsixteenth eighth dottedeighth quarter dottedquarter half dottedhalf whole}
 
   @@master_scale = []
   OCTAVES.times do |i|

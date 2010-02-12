@@ -6,9 +6,9 @@ require 'fileutils'
 
 include Generators
 
-gem 'midilib', '= 1.0.0'
-require 'midilib/sequence'
-require 'midilib/consts'
+#gem 'midilib', '= 1.0.0'
+#require 'midilib/sequence'
+require 'midilib'
 include MIDI
 
 def relative_pitch_changes(guide)
