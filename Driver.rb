@@ -1,11 +1,12 @@
-require 'Generators.rb'
 require 'rubygems'
 require 'EventTree.rb'
+require 'Generators.rb'
 require 'ChaosComposer.rb'
 require 'fileutils'
 
 include Generators
 
+gem 'midilib', '= 1.0.0'
 require 'midilib/sequence'
 require 'midilib/consts'
 include MIDI
@@ -233,7 +234,10 @@ if __FILE__ == $0
   if( tests.include? ARGV[0] )
      main(ARGV[0])
   else
-     puts "Bad input"
+     puts "Must include name of which chaotic equation to use. 
+           Usage:   ruby Driver.rb <#{tests.join(', ')}>
+           Ex:      ruby Driver.rb Henon".gsub(/^\s*/,'')
+
      exit(1)
   end
 
